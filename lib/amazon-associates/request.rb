@@ -115,22 +115,22 @@ module Amazon
                       :query => _query_string(params)
     end
     
-    def _escape(value)
-       value.gsub(/([^a-zA-Z0-9_.~-]+)/) do
-         '%' + $1.unpack('H2' * $1.bytesize).join('%').upcase
-       end
-     end
+    def self._escape(value)
+      value.gsub(/([^a-zA-Z0-9_.~-]+)/) do
+       '%' + $1.unpack('H2' * $1.bytesize).join('%').upcase
+      end
+    end
 
-     def _query_string(params)
-       qs   = params.sort.map { |k, v| "#{k}=" + _escape(v) }.join('&')
+    def self._query_string(params)
+      qs   = params.sort.map { |k, v| "#{k}=" + _escape(v) }.join('&')
 
-       # Sign query string.
-       req  = ['GET', @host, '/onca/xml', qs]
-       hmac = OpenSSL::HMAC.digest HMAC_DIGEST, @secret, req.join("\n")
-       sig  = _escape [hmac].pack('m').chomp
+      # Sign query string.
+      req  = ['GET', @options[:host], '/onca/xml', qs]
+      hmac = OpenSSL::HMAC.digest HMAC_DIGEST, @options[:secret], req.join("\n")
+      sig  = _escape [hmac].pack('m').chomp
 
-       "#{qs}&Signature=#{sig}"
-     end
+      "#{qs}&Signature=#{sig}"
+    end
 
     def self.cacheable?(operation)
       caching_enabled? && !operation.starts_with?('Cart')
