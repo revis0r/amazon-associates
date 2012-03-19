@@ -5,10 +5,11 @@ module Amazon
     end
 
     class BrowseNode < ApiResult
-      xml_reader :id, :from => 'xmlns:BrowseNodeId', :required => true
+      xml_name 'BrowseNode'
+      xml_reader :id, :from => 'BrowseNodeId', :required => true
       xml_reader :name, :from => 'Name'
-      xml_reader :parent, :as => BrowseNode, :from => 'xmlns:BrowseNode', :in => 'xmlns:Ancestors'
-      xml_reader :children, :as => [BrowseNode]
+      xml_reader :parent, :as => BrowseNode, :from => 'BrowseNode', :in => 'Ancestors'
+      xml_reader :children, :as => [BrowseNode], :in => 'Children'
       xml_reader :top_sellers, :as => [Item]
 
       def self.find(browse_node_id, opts = {})
