@@ -9,7 +9,27 @@ module Amazon
   module Associates
     # Only we throw this
     class ConfigurationError < RuntimeError; end
+    class BadLocale     < ArgumentError; end
+    class MissingKey    < ArgumentError; end
+    class MissingSecret < ArgumentError; end
+    class MissingTag    < ArgumentError; end
+    
+    # The latest Amazon API version.
+    CURRENT_API_VERSION = '2011-08-01'
 
+    # A list of Amazon endpoints.
+    HOSTS = {
+      :ca => 'ecs.amazonaws.ca',
+      :cn => 'webservices.amazon.cn',
+      :de => 'ecs.amazonaws.de',
+      :es => 'webservices.amazon.es',
+      :fr => 'ecs.amazonaws.fr',
+      :it => 'webservices.amazon.it',
+      :jp => 'ecs.amazonaws.jp',
+      :uk => 'ecs.amazonaws.co.uk',
+      :us => 'ecs.amazonaws.com'
+    }
+    
     # Default search options
     @options = {}
 
@@ -70,8 +90,11 @@ module Amazon
       end
 
       def options
-        access_key = @options.delete(:aws_access_key_id)
-        @options[:aWS_access_key_id] ||= (ENV['AMAZON_ACCESS_KEY_ID'] || access_key)
+        locale  = (@options[:country] || :us).to_sym
+        @options[:host] = HOSTS[locale] or raise BadLocale
+        raise MissingKey if @options[:key].blank?
+        raise MissingSecret if @options[:secret].blank?
+        raise MissingTag if @options[:tag].blank?
         @options
       end
     end

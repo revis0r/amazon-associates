@@ -27,10 +27,10 @@ module Amazon
     # Generic send request to ECS REST service. You have to specify the :operation parameter.
     def self.send_request(opts)
       opts.to_options!
-      opts.reverse_merge! options.except(:caching_options, :caching_strategy)
-      if opts[:aWS_access_key_id].blank?
-        raise ArgumentError, "amazon-associates requires the :aws_access_key_id option"
-      end
+      # opts.reverse_merge! options.except(:caching_options, :caching_strategy)
+      # if opts[:aWS_access_key_id].blank?
+      #   raise ArgumentError, "amazon-associates requires the :aws_access_key_id option"
+      # end
       log_body = opts.delete(:log)
 
       request_url = prepare_url(opts)
@@ -45,7 +45,7 @@ module Amazon
       unless response
         log "Request URL: #{request_url}"
 
-        response = Net::HTTP.get_response(URI::parse(request_url))
+        response = Net::HTTP.get_response(request_url)
         unless response.kind_of? Net::HTTPSuccess
           raise RequestError, "HTTP Response: #{response.inspect}"
         end
@@ -57,7 +57,7 @@ module Amazon
       eval(doc.name).from_xml(doc, request_url)
     end
 
-    BASE_ARGS = [:aWS_access_key_id, :operation, :associate_tag, :response_group]
+    BASE_ARGS = [:key, :operation, :tag, :response_group]
     CART_ARGS = [:cart_id, :hMAC]
     ITEM_ARGS = (0..99).inject([:items]) do |all, i|
       all << :"Item.#{i}.ASIN"
@@ -90,41 +90,47 @@ module Amazon
     end
 
     HMAC_DIGEST = OpenSSL::Digest::Digest.new('sha256')
-    TLDS = HashWithIndifferentAccess.new(
-        'us' => 'com',
-        'uk' => 'co.uk',
-        'ca' => 'ca',
-        'de' => 'de',
-        'jp' => 'co.jp',
-        'fr' => 'fr'
-    )
-    def self.tld(country)
-      TLDS.fetch(country || 'us') do
-        raise RequestError, "Invalid country '#{country}'"
-      end
-    end
 
     def self.prepare_url(opts)
       opts = opts.to_hash.to_options!
-      raise opts.inspect if opts.has_key?(:cart)
+      # raise opts.inspect if opts.has_key?(:cart)
       opts.assert_valid_keys(*valid_arguments(opts[:operation]))
 
       params = Hash[opts.map do |(k, v)|
-        v *= ',' if v.is_a? Array
-        [k.to_s.camelize, v.to_s]
+        [k.to_s.camelize, v.is_a?(Array) ? v.join(',') : v.to_s]
       end]
 
       params.merge!(
         'Service' => 'AWSECommerceService',
         'Timestamp' => Time.now.gmtime.iso8601,
         'SignatureVersion' => '2',
-        'SignatureMethod' => "HmacSHA256"
+        'SignatureMethod' => "HmacSHA256",
+        'AWSAccessKeyId' => @options[:key],
+        'AssociateTag'   => @options[:tag],
+        'Version'        => CURRENT_API_VERSION
       )
 
-      unsigned_uri = URI.parse("http://ecs.amazonaws.#{tld(opts.delete(:country))}/onca/xml?#{params.sort { |a, b| a[0] <=> b[0] }.map { |key, val| "#{key}=#{CGI::escape(val).gsub('+', '%20')}" }.join("&")}")
-      hmac = OpenSSL::HMAC.digest(HMAC_DIGEST, ENV['AMAZON_SECRET_ACCESS_KEY'], "GET\n#{unsigned_uri.host}\n#{unsigned_uri.path}\n#{unsigned_uri.query}")
-      "#{unsigned_uri}&Signature=#{CGI::escape(Base64.encode64(hmac).chomp)}"
+      URI::HTTP.build :host  => @options[:host],
+                      :path  => '/onca/xml',
+                      :query => _query_string(params)
     end
+    
+    def _escape(value)
+       value.gsub(/([^a-zA-Z0-9_.~-]+)/) do
+         '%' + $1.unpack('H2' * $1.bytesize).join('%').upcase
+       end
+     end
+
+     def _query_string(params)
+       qs   = params.sort.map { |k, v| "#{k}=" + _escape(v) }.join('&')
+
+       # Sign query string.
+       req  = ['GET', @host, '/onca/xml', qs]
+       hmac = OpenSSL::HMAC.digest HMAC_DIGEST, @secret, req.join("\n")
+       sig  = _escape [hmac].pack('m').chomp
+
+       "#{qs}&Signature=#{sig}"
+     end
 
     def self.cacheable?(operation)
       caching_enabled? && !operation.starts_with?('Cart')
