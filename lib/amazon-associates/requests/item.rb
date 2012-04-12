@@ -4,7 +4,7 @@ module Amazon
   module Associates
     request :item_search => :keywords do |opts|
       # TODO: Default to blended?  Don't show others except on refined search page?
-      opts[:search_index] ||= 'Books'
+      # opts[:search_index] ||= 'All'
       opts
     end
     request :similarity_lookup => :item_id,
