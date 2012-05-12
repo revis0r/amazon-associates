@@ -35,21 +35,21 @@ module Amazon
 
       request_url = prepare_url(opts)
       response = nil
-
+      log "Request URL: #{request_url}"
+      
       if cache_it = cacheable?(opts[:operation])
         FilesystemCache.sweep
 
-        response = FilesystemCache.get(request_url)
+        response = FilesystemCache.get(opts.to_s)
       end
 
       unless response
-        log "Request URL: #{request_url}"
-
+        log "Not cached"
         response = Net::HTTP.get_response(request_url)
         unless response.kind_of? Net::HTTPSuccess
           raise RequestError, "HTTP Response: #{response.inspect}"
         end
-        cache_response(request_url, response) if cache_it
+        cache_response(opts.to_s, response) if cache_it
       end
 
       doc = ROXML::XML::Node.from(response.body)
