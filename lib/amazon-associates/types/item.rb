@@ -117,11 +117,11 @@ module Amazon
 
       def self.all(opts)
         opts = opts.dup.to_options!
-        unless %w[All Blended Merchants].include? opts[:search_index]
-          opts.reverse_merge!(:merchant_id => 'Amazon',
-                              :condition => 'All')
-        end
-        opts[:availability] ||= 'Available' unless opts[:condition].nil? or opts[:condition] == 'New'
+        # unless %w[All Blended Merchants].include? opts[:search_index]
+        #   opts.reverse_merge!(:merchant_id => 'Amazon',
+        #                       :condition => 'All')
+        # end
+        # opts[:availability] ||= 'Available' unless opts[:condition].nil? or opts[:condition] == 'New'
         opts[:item_page]    ||= (opts.delete(:page) || 1)
         prep_responses(opts)
 
