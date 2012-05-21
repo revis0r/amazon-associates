@@ -50,7 +50,7 @@ module Amazon
         !@changes.empty?
       end
 
-      def add(item, count = 1)
+      def add(item, offer_id = nil, count = 1)
         raise ArgumentError, "item is nil" if item.nil?
         raise ArgumentError, "count isn't positive" if count <= 0
 
@@ -60,6 +60,9 @@ module Amazon
           count += item.quantity
         else
           action = :cart_add
+          if offer_id.present?
+            item = {offer_listing_id: offer_id}
+          end
         end
         # TODO: This could be much more sophisticated, collapsing operations and such
         @changes << [action, self, {:items => {item => count}}]

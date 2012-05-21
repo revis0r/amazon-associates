@@ -165,6 +165,7 @@ module Amazon
       # TODO: This could probably just be #id
       xml_reader :cart_item_id
       xml_reader :quantity, :as => Integer, :required => true
+      xml_reader :price, :as => Price
     end
   end
 end

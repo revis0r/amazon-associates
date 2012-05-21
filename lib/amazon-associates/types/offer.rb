@@ -1,7 +1,7 @@
 module Amazon
   module Associates
     class Offer < ApiResult
-      xml_reader :listing_id, :from => 'OfferListingId'
+      xml_reader :listing_id, :from => 'OfferListingId', :in => 'xmlns:OfferListing'
       xml_reader :price, :as => Price, :in => 'xmlns:OfferListing'
       xml_reader :amount_saved, :as => Price, :in => 'xmlns:OfferListing'
       xml_reader :percentage_saved, :in => 'xmlns:OfferListing'
