@@ -15,6 +15,7 @@ module Amazon
       xml_name 'ItemSearchResponse'
 
       xml_reader :request_query, :as => ItemSearchRequest, :in => 'xmlns:Items/xmlns:Request', :required => true
+      xml_reader :search_bin_sets, :as => [SearchBinSet], :in => 'xmlns:Items/xmlns:SearchBinSets'
     end
   end
 end

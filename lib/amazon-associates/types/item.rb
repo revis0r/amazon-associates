@@ -134,6 +134,14 @@ module Amazon
           pager.replace response.items
         end
       end
+      
+      def self.search_bins(opts)
+        opts = opts.dup.to_options!
+        prep_responses(opts)
+
+        response = Amazon::Associates.item_search(opts)
+        response.search_bin_sets
+      end
 
       def self.one(opts)
         prep_responses(opts)
