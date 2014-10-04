@@ -19,6 +19,7 @@ module Amazon
       xml_reader :listmania_lists, :as => [ListmaniaList]
       xml_reader :browse_nodes, :as => [BrowseNode]
       xml_reader :offers, :as => [Offer]
+      xml_reader :accessories, :as => [Accessory]
       # TODO: This should be offers.total_new
       xml_reader :total_new_offers, :from => 'TotalNew', :in => 'xmlns:OfferSummary', :as => Integer
       # TODO: This should be offers.total
