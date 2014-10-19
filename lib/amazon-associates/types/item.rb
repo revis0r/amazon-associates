@@ -6,6 +6,7 @@ module Amazon
       xml_name 'Item'
 
       xml_reader :asin, :from => 'ASIN'
+      xml_reader :parent_asin, :from => 'ParentASIN'
       xml_reader :detail_page_url, :from => 'DetailPageURL'
       xml_reader :list_price, :as => Price, :in => 'xmlns:ItemAttributes'
       xml_reader :attributes, :as => {:key => :name,
@@ -34,6 +35,8 @@ module Amazon
       xml_reader :editorial_reviews, :as => [EditorialReview]
       xml_reader :customer_reviews, :as => [CustomerReview], :in => 'xmlns:CustomerReviews'
       xml_reader :features, :as => [], :in => 'xmlns:ItemAttributes'
+
+      xml_reader :variations, :as => Variations
 
       alias_method :id, :asin
 

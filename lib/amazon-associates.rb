@@ -15,7 +15,7 @@ module Amazon
     class MissingTag    < ArgumentError; end
     
     # The latest Amazon API version.
-    CURRENT_API_VERSION = '2011-08-01'
+    CURRENT_API_VERSION = '2013-08-01'
 
     # A list of Amazon endpoints.
     HOSTS = {
