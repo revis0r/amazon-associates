@@ -13,6 +13,7 @@ module Amazon
                                       :value => :content}, :in => 'xmlns:ItemAttributes'
       xml_reader :small_image, :as => Image
       xml_reader :medium_image, :as => Image
+      xml_reader :large_image, :as => Image
       #TODO: would be nice to have :key => '@category' and :value => {[Image] => 'SwatchImage'}
       xml_reader :image_sets, :as => [ImageSet] do |sets|
         sets.index_by(&:category)

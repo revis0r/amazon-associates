@@ -6,6 +6,7 @@ module Amazon
       xml_reader :medium, :as => Image, :from => 'MediumImage'
       xml_reader :large, :as => Image, :from => 'LargeImage'
       xml_reader :swatch, :as => Image, :from => 'SwatchImage'
+      xml_reader :hi_res_image, :as => Image, :from => 'HiResImage'
     end
   end
 end
