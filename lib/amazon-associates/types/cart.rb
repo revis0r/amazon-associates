@@ -69,6 +69,14 @@ module Amazon
       end
       alias_method :<<, :add
 
+      def change_quantity(item, quantity)
+        if @items.include? item
+          @changes << [:cart_modify, self, {:items => {item => quantity}}]
+        else
+          false
+        end
+      end
+
       def clear
         @changes << [:cart_clear, self]
       end
