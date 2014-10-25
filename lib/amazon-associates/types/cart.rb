@@ -71,6 +71,7 @@ module Amazon
 
       def change_quantity(item, quantity)
         if @items.include? item
+          item = @items.find {|i| i == item }
           @changes << [:cart_modify, self, {:items => {item => quantity}}]
         else
           false
