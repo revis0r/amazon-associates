@@ -69,9 +69,9 @@ module Amazon
       end
       alias_method :<<, :add
 
-      def change_quantity(item, quantity)
-        if @items.include? item
-          item = @items.find {|i| i == item }
+      def change_quantity(cart_item_id, quantity)
+        item = @items.find {|i| i.cart_item_id == cart_item_id }
+        if item.present?
           @changes << [:cart_modify, self, {:items => {item => quantity}}]
         else
           false
