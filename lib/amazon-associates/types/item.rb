@@ -38,6 +38,7 @@ module Amazon
       xml_reader :features, :as => [], :in => 'xmlns:ItemAttributes'
 
       xml_reader :variations, :as => Variations
+      xml_reader :item_dimensions, :as => ItemDimensions
 
       alias_method :id, :asin
 
