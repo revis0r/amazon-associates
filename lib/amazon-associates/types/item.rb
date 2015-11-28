@@ -6,6 +6,7 @@ module Amazon
       xml_name 'Item'
 
       xml_reader :asin, :from => 'ASIN'
+      xml_reader :sales_rank, :from => 'SalesRank'
       xml_reader :parent_asin, :from => 'ParentASIN'
       xml_reader :detail_page_url, :from => 'DetailPageURL'
       xml_reader :list_price, :as => Price, :in => 'xmlns:ItemAttributes'
