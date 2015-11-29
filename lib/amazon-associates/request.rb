@@ -1,5 +1,5 @@
 %w{errors extensions/core types/api_result  types/accessory types/variations
-   types/error types/bin_parameter types/bin types/search_bin_set types/customer_review types/editorial_review types/item_dimensions types/ordinal types/listmania_list types/browse_node types/measurement types/image types/image_set types/price types/offer types/item types/requests types/cart
+   types/error types/bin_parameter types/bin types/search_bin_set types/customer_review types/editorial_review types/ordinal types/listmania_list types/browse_node types/measurement types/item_dimensions types/image types/image_set types/price types/offer types/item types/requests types/cart
    responses/response responses/item_search_response responses/item_lookup_response responses/similarity_lookup_response responses/browse_node_lookup_response responses/cart_responses }.each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
